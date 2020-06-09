@@ -1,29 +1,28 @@
 import { Component, OnInit } from "@angular/core";
 import { Produto } from "../produto.model";
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
-import { Apollo } from 'apollo-angular';
-import gql from 'graphql-tag';
 import { Router, ActivatedRoute } from "@angular/router";
+import { ProdutoGQL } from '../produto.GQL';
 
 //mutation Add( $nome: TNome!, $descricao: String!, $estoque: TQtde2!, $precoVenda: TPreco4!, $idUnidadeMedida: Int! ) {
-const submitProduto = gql`
-  mutation Add( $nome: TNome!, $descricao: String, $estoque: TQtde2, $precoVenda: TPreco4, $idUnidadeMedida: Int! ) {
-    createProduto(
-      input: {
-        produto: {
-          nome: $nome,
-          descricao: $descricao,
-          estoque: $estoque,
-          precoVenda: $precoVenda,
-          idUnidadeMedida: $idUnidadeMedida
-        }
-      }
-    )
-    {
-      clientMutationId
-    }
-  }
-`;
+// const submitProduto = gql`
+//   mutation Add( $nome: TNome!, $descricao: String, $estoque: TQtde2, $precoVenda: TPreco4, $idUnidadeMedida: Int! ) {
+//     createProduto(
+//       input: {
+//         produto: {
+//           nome: $nome,
+//           descricao: $descricao,
+//           estoque: $estoque,
+//           precoVenda: $precoVenda,
+//           idUnidadeMedida: $idUnidadeMedida
+//         }
+//       }
+//     )
+//     {
+//       clientMutationId
+//     }
+//   }
+// `;
 
 @Component({
   selector: "app-produto-form",
@@ -46,7 +45,7 @@ export class ProdutoFormComponent implements OnInit {
   isLoadingResults = false;
 
   constructor(
-    private apollo: Apollo,
+    private produtoGQL: ProdutoGQL,
     private router: Router,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder
@@ -93,6 +92,10 @@ export class ProdutoFormComponent implements OnInit {
       precoVenda: this.form.get('precoVenda').value,
     };
     const produtoData = this.form.value;
+    const formProduto = {
+      ...this.form.value
+    };
+
     const id = this.form.get('id').value;
 
     if (id !== 0) {
@@ -107,39 +110,49 @@ export class ProdutoFormComponent implements OnInit {
       //     });
     } else {
       this.isLoadingResults = true;
-      this.apollo.mutate({
-        mutation: submitProduto,
-        variables: {
-          input: {
-            nome: "kkkk",
-            descricao: "produtoData.descricao",
-            estoque: 10,
-            precoVenda: 11,
-            idUnidadeMedida: 1
-          }
-        },
-        // mutation: gql`
-        //   mutation My {
-        //     createProduto(
-        //       input: {
-        //         produto: {
-        //           nome: "fixo", idUnidadeMedida: 1
-        //         }
-        //       }
-        //     )
-        //     {
-        //       clientMutationId
-        //     }
-        //   }
-        // `
-      }).subscribe(({ data }) => {
-        console.log('got data', data);
-        this.isLoadingResults = false;
-        this.router.navigate(["/produtos"]);
-      }, (error) => {
+      this.produtoGQL.createProduto(formProduto).subscribe((response) =>
+        {
+          console.log('gravou');
+          console.log(response);
+          this.isLoadingResults = false;
+          this.router.navigate(["/produtos"]);
+        }, (error) => {
         console.log('there was an error sending the query', error);
         this.isLoadingResults = false;
       });
+      // this.apollo.mutate({
+      //   mutation: submitProduto,
+      //   variables: {
+      //     input: {
+      //       nome: "kkkk",
+      //       descricao: "produtoData.descricao",
+      //       estoque: 10,
+      //       precoVenda: 11,
+      //       idUnidadeMedida: 1
+      //     }
+      //   },
+      //   // mutation: gql`
+      //   //   mutation My {
+      //   //     createProduto(
+      //   //       input: {
+      //   //         produto: {
+      //   //           nome: "fixo", idUnidadeMedida: 1
+      //   //         }
+      //   //       }
+      //   //     )
+      //   //     {
+      //   //       clientMutationId
+      //   //     }
+      //   //   }
+      //   // `
+      // }).subscribe(({ data }) => {
+      //   console.log('got data', data);
+      //   this.isLoadingResults = false;
+      //   this.router.navigate(["/produtos"]);
+      // }, (error) => {
+      //   console.log('there was an error sending the query', error);
+      //   this.isLoadingResults = false;
+      // });
     }
   }
 

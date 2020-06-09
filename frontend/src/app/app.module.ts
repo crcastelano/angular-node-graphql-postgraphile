@@ -23,13 +23,9 @@ import localePt from '@angular/common/locales/pt';
 import { registerLocaleData } from '@angular/common';
 import { MatTableExporterModule } from 'mat-table-exporter';
 
-import { ApolloModule, APOLLO_OPTIONS } from "apollo-angular";
-import { HttpLinkModule, HttpLink } from 'apollo-angular-link-http';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import { GraphQLModule } from './graphql/graphql.module';
 
 registerLocaleData(localePt);
-
-const API = 'http://localhost:7000/graphql';
 
 @NgModule({
   imports: [
@@ -42,8 +38,7 @@ const API = 'http://localhost:7000/graphql';
     ReactiveFormsModule,
     MatTableExporterModule,
     HttpClientModule,
-    ApolloModule,
-    HttpLinkModule
+    GraphQLModule,
   ],
   declarations: [
     AppComponent,
@@ -63,18 +58,18 @@ const API = 'http://localhost:7000/graphql';
       provide: LOCALE_ID,
       useValue: 'pt-BR'
     },
-    {
-      provide: APOLLO_OPTIONS,
-      useFactory: (httpLink: HttpLink) => {
-        return {
-          cache: new InMemoryCache(),
-          link: httpLink.create({
-            uri: API
-          })
-        }
-      },
-      deps: [HttpLink]
-    }
+    // {
+    //   provide: APOLLO_OPTIONS,
+    //   useFactory: (httpLink: HttpLink) => {
+    //     return {
+    //       cache: new InMemoryCache(),
+    //       link: httpLink.create({
+    //         uri: API
+    //       })
+    //     }
+    //   },
+    //   deps: [HttpLink]
+    // }
   ],
 })
 export class AppModule {}
