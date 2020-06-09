@@ -1,0 +1,40 @@
+<form [formGroup]="form">
+  <mat-card>
+    <mat-card-title>{{ operacao }}</mat-card-title>
+    <div class="numeros">
+      <mat-form-field appearance="fill">
+        <mat-label>Id</mat-label>
+        <input matInput placeholder="Id" formControlName="id" width="5" readonly />
+      </mat-form-field>
+    </div>
+    <br>
+    <mat-form-field appearance="outline">
+      <mat-label>Nome</mat-label>
+      <input matInput placeholder="Nome" formControlName="nome" />
+    </mat-form-field>
+    <br>
+    <mat-form-field appearance="outline">
+      <mat-label>Descrição</mat-label>
+      <input matInput placeholder="Descrição" formControlName="descricao" />
+    </mat-form-field>
+    <br>
+    <div class="numeros">
+      <mat-form-field appearance="outline">
+        <mat-label>Quantidade</mat-label>
+        <input matInput placeholder="Quantidade" formControlName="estoque" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Preço (R$)</mat-label>
+        <input matInput placeholder="Preço (R$)" formControlName="precoVenda" />
+      </mat-form-field>
+    </div>
+    <br>
+    <button mat-raised-button (click)="save()" color="primary">
+      Salvar
+    </button>
+    <button mat-raised-button (click)="cancel()">
+      Cancelar
+    </button>
+  </mat-card>
+</form>

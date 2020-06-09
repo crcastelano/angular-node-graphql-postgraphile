@@ -1,0 +1,18 @@
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  margin: 10px 15px 0px 0px;
+}
+
+mat-form-field {
+  margin-right: 2.5rem;
+  width: calc(50% - 2.5rem);
+}
+
+.numeros {
+  margin-right: 2.5rem;
+  width: calc(54% - 2.8rem);
+}
