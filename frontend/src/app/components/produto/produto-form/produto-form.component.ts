@@ -4,39 +4,19 @@ import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from "@angular/router";
 import { ProdutoGQL } from '../produto.GQL';
 
-//mutation Add( $nome: TNome!, $descricao: String!, $estoque: TQtde2!, $precoVenda: TPreco4!, $idUnidadeMedida: Int! ) {
-// const submitProduto = gql`
-//   mutation Add( $nome: TNome!, $descricao: String, $estoque: TQtde2, $precoVenda: TPreco4, $idUnidadeMedida: Int! ) {
-//     createProduto(
-//       input: {
-//         produto: {
-//           nome: $nome,
-//           descricao: $descricao,
-//           estoque: $estoque,
-//           precoVenda: $precoVenda,
-//           idUnidadeMedida: $idUnidadeMedida
-//         }
-//       }
-//     )
-//     {
-//       clientMutationId
-//     }
-//   }
-// `;
-
 @Component({
   selector: "app-produto-form",
   templateUrl: "./produto-form.component.html",
   styleUrls: ["./produto-form.component.css"]
 })
 export class ProdutoFormComponent implements OnInit {
-  produto: Produto = {
-    id: null,
-    nome: "",
-    descricao: "",
-    estoque: null,
-    precoVenda: null
-  };
+  // produto: Produto = {
+  //   id: null,
+  //   nome: "",
+  //   descricao: "",
+  //   estoque: null,
+  //   precoVenda: null
+  // };
 
   resp: any = {};
   key: string = "";
@@ -90,10 +70,12 @@ export class ProdutoFormComponent implements OnInit {
       descricao: this.form.get('descricao').value,
       estoque: this.form.get('estoque').value,
       precoVenda: this.form.get('precoVenda').value,
+      idUnidadeMedida: 1
     };
-    const produtoData = this.form.value;
+    // const produtoData = data; //this.form.value;
+    
     const formProduto = {
-      ...this.form.value
+        produto: data
     };
 
     const id = this.form.get('id').value;
@@ -103,7 +85,7 @@ export class ProdutoFormComponent implements OnInit {
       //   .subscribe(
       //     response => {
       //       this.produtoService.showMessage("Produto atualizado com sucesso !!!");
-      //       this.router.navigate(["/produtos"]);
+      //       this.router.navi/gate(["/produtos"]);
       //     },
       //     error => {
       //       this.produtoService.showMessage("Erro na alteração do produto !" + error.error.error);
@@ -112,47 +94,13 @@ export class ProdutoFormComponent implements OnInit {
       this.isLoadingResults = true;
       this.produtoGQL.createProduto(formProduto).subscribe((response) =>
         {
-          console.log('gravou');
-          console.log(response);
           this.isLoadingResults = false;
           this.router.navigate(["/produtos"]);
         }, (error) => {
-        console.log('there was an error sending the query', error);
-        this.isLoadingResults = false;
+          console.log('there was an error sending the query', error);
+          this.isLoadingResults = false;
       });
-      // this.apollo.mutate({
-      //   mutation: submitProduto,
-      //   variables: {
-      //     input: {
-      //       nome: "kkkk",
-      //       descricao: "produtoData.descricao",
-      //       estoque: 10,
-      //       precoVenda: 11,
-      //       idUnidadeMedida: 1
-      //     }
-      //   },
-      //   // mutation: gql`
-      //   //   mutation My {
-      //   //     createProduto(
-      //   //       input: {
-      //   //         produto: {
-      //   //           nome: "fixo", idUnidadeMedida: 1
-      //   //         }
-      //   //       }
-      //   //     )
-      //   //     {
-      //   //       clientMutationId
-      //   //     }
-      //   //   }
-      //   // `
-      // }).subscribe(({ data }) => {
-      //   console.log('got data', data);
-      //   this.isLoadingResults = false;
-      //   this.router.navigate(["/produtos"]);
-      // }, (error) => {
-      //   console.log('there was an error sending the query', error);
-      //   this.isLoadingResults = false;
-      // });
+    
     }
   }
 

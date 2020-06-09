@@ -35,38 +35,13 @@ export class ProdutoGQL {
   `;
 
   private createProdutoMutation = gql`
-    mutation createProduto($input: ProdutoCreateInput!) {
-      createProduto(input: $input) {
+  mutation MyMutation($input: CreateProdutoInput!) {
+    createProduto(input: $input) {
+      clientMutationId
+      produto {
         id
         nome
-        descricao
-        estoque
-        precoVenda
-    }
-  }
-  `;
-
-  private createCadastroInteressadoMutation = gql`
-    mutation createCadastroInteressado($input: CadastroInteressadoCreateInput!) {
-      createCadastroInteressado(input: $input) {
-        id
-        nome
-        sexo
-        id_usuario_cadastro
-        id_usuario
-        membroFamiliaInteressado{
-          id
-        nome
-          relacao_parentesco
-        }
-        areaInteresse{
-          id
-          identificacao
-        }
-        conjugeInteressado{
-          id
-          nome
-        }
+      }
     }
   }
   `;
@@ -179,15 +154,6 @@ export class ProdutoGQL {
       query: this.getAllTipoAnexoCadastroInteressadoQuery,
       variables: {},
     }).pipe(pluck('data', 'getAllTipoAnexoCadastroInteressado'));
-  }
-
-  public createCadastroInteressado(input: any): Observable<any> {
-    return this.apollo.mutate<any>({
-      mutation: this.createCadastroInteressadoMutation,
-      variables: {
-        input,
-      },
-    }).pipe(pluck('data', 'createCadastroInteressado'));
   }
 
   public updateCadastroInteressado(input: any): Observable<any> {
