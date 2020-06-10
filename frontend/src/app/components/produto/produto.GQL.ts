@@ -12,8 +12,8 @@ export class ProdutoGQL {
   constructor(private apollo: Apollo) { }
 
   private getAllProdutoQuery = gql`
-    query getAllProduto {
-      produtos(first: 50) {
+    query produtos($condition: ProdutoCondition) {
+      produtos(condition: $condition) {
         nodes {
           id
           nome
@@ -25,25 +25,46 @@ export class ProdutoGQL {
     }
   `;
 
-  private getAllTipoAnexoCadastroInteressadoQuery = gql`
-    query getAllTipoAnexoCadastroInteressado($filter: TipoAnexoCadastroInteressadoFilterInput) {
-      getAllTipoAnexoCadastroInteressado(filter: $filter) {
-        id
-        descricao
+  private createProdutoMutation = gql`
+    mutation createProduto($input: CreateProdutoInput!) {
+      createProduto(input: $input) {
+        clientMutationId
+        produto {
+          id
+          nome
+        }
       }
     }
   `;
 
-  private createProdutoMutation = gql`
-  mutation MyMutation($input: CreateProdutoInput!) {
-    createProduto(input: $input) {
-      clientMutationId
-      produto {
-        id
-        nome
+  private updateProdutoMutation = gql`
+    mutation updateProduto($input: UpdateProdutoInput!) {
+      updateProduto(input: $input) {
+        produto {
+          id
+        }
       }
     }
-  }
+  `;
+ /*
+   *** Exemplo updateProdutoMutation
+    {
+      "input": {
+        "patch": {
+          "nome": "teste"
+        },
+        "id": 56162
+      }
+    }
+*/
+
+  private deleteProdutoMutation = gql`
+    mutation deleteProduto($input: DeleteProdutoInput!) {
+      deleteProduto(input: $input) {
+        clientMutationId
+        deletedProdutoNodeId
+      }
+    }
   `;
 
   private updateCadastroInteressadoMutation = gql`
@@ -133,10 +154,12 @@ export class ProdutoGQL {
     }
   `;
 
-  public getAllProduto(): Observable<any> {
+  public getAllProduto(condition: any): Observable<any> {
     return this.apollo.query<any>({
       query: this.getAllProdutoQuery,
-      variables: {},
+      variables: {
+        condition
+      },
     }).pipe(pluck('data', 'produtos'));
   }
 
@@ -149,21 +172,23 @@ export class ProdutoGQL {
     }).pipe(pluck('data', 'createProduto'));
   }
 
-  public getAllTipoAnexoCadastroInteressado(): Observable<any> {
-    return this.apollo.query<any>({
-      query: this.getAllTipoAnexoCadastroInteressadoQuery,
-      variables: {},
-    }).pipe(pluck('data', 'getAllTipoAnexoCadastroInteressado'));
-  }
-
-  public updateCadastroInteressado(input: any): Observable<any> {
+  public updateProduto(input: any): Observable<any> {
     return this.apollo.mutate<any>({
-      mutation: this.updateCadastroInteressadoMutation,
+      mutation: this.updateProdutoMutation,
       variables: {
         input,
       },
-    }).pipe(pluck('data', 'updateCadastroInteressado'));
+    }).pipe(pluck('data', 'updateProduto'));
   }
 
-}
+  public deleteProduto(input: any): Observable<any> {
+    return this.apollo.mutate<any>({
+      mutation: this.deleteProdutoMutation,
+      variables: {
+        input,
+      },
+    }).pipe(pluck('data', 'deleteProduto'));
+  }
 
+
+}

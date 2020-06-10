@@ -44,27 +44,16 @@ export class ProdutoListComponent implements OnInit {
     private router: Router,
     // private apollo: Apollo,
     private produtoGQL: ProdutoGQL
-  ) {}
+  ) { }
 
   ngOnInit() {
-    this.produtoGQL.getAllProduto().subscribe( response => {
+    this.produtoGQL.getAllProduto(null).subscribe(response => {
       this.dataSource = new MatTableDataSource(response.nodes);
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
       this.isLoadingResults = false;
     }
     );
-
-    // this.apollo.query({
-    //   query: Allquery
-    // }).subscribe(res => {
-    //   this.resp = res;
-    //   this.produtos = this.resp.data.produtos.nodes;
-    //   this.dataSource = new MatTableDataSource(this.produtos);
-    //   this.dataSource.sort = this.sort;
-    //   this.dataSource.paginator = this.paginator;
-    //   this.isLoadingResults = false;
-    // });
   }
 
   navigateToProdutoCreate(): void {
@@ -72,21 +61,23 @@ export class ProdutoListComponent implements OnInit {
   }
 
   update(id) {
-    // this.router.navigate(['/produtos/update/' + id]);
+    this.router.navigate(['/produtos/update/' + id]);
   }
 
-  delete(id: number) {
-    // if (window.confirm('Confirma exclusão do produto ?' + id)) {
-    //   this.produtoService.delete(id)
-    //     .subscribe(
-    //       response => {
-    //         this.produtoService.showMessage('Produto Excluído com sucesso !!!');
-    //         this.ngOnInit();
-    //       },
-    //       error => {
-    //         this.produtoService.showMessage('Erro na exclusão do produto !' + error.error.error);
-    //       });
-    // }
+  delete(idProduto: number) {
+    if (window.confirm('Confirma exclusão do produto ?' + idProduto)) {
+      this.isLoadingResults = true;
+      const id = {
+        id: idProduto
+      };
+      this.produtoGQL.deleteProduto(id).subscribe((response) => {
+        this.isLoadingResults = false;
+        this.router.navigate(["/produtos"]);
+      }, (error) => {
+        console.log('there was an error sending the query', error);
+        this.isLoadingResults = false;
+      });
+    }
   }
 
   applyFilter(event: Event) {
